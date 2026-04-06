@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Leave Management | PK System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f1f5f9; }
+
+        /* Sidebar - identical to index.html */
+        .sidebar {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+        .brand {
+            padding: 1.8rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .brand-logo {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+        }
+        .brand h4 { font-weight: 700; letter-spacing: -0.3px; margin-bottom: 0; }
+        .brand small { font-size: 0.7rem; opacity: 0.7; }
+        .nav-link {
+            color: #cbd5e1;
+            padding: 0.7rem 1.2rem;
+            margin: 0.3rem 1rem;
+            border-radius: 12px;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .nav-link i { width: 24px; margin-right: 10px; }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        /* Main content */
+        .main-content { padding: 2rem; }
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #64748b;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2rem;
+        }
+
+        /* Custom card styling */
+        .form-card, .list-card {
+            border-radius: 28px;
+            border: 1px solid #eef2ff;
+            background: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .form-card:hover, .list-card:hover {
+            transform: translateY(-2px);
+        }
+        .btn-primary-custom {
+            background: #4f46e5;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            color: white;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-primary-custom:hover {
+            background: #4338ca;
+            transform: scale(1.02);
+        }
+        .table-leaves th {
+            background: #f8fafc;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+        .badge-pending { background-color: #f59e0b; color: white; }
+        .badge-approved { background-color: #10b981; color: white; }
+        .badge-rejected { background-color: #ef4444; color: white; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { min-height: auto; }
+            .main-content { padding: 1rem; }
+            .form-card, .list-card { margin-bottom: 1.5rem; }
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .btn-sm { font-size: 0.7rem; padding: 0.2rem 0.5rem; }
+        }
+
+        /* Large screens (TV/Desktop) */
+        @media (min-width: 1400px) {
+            .main-content { padding: 2.5rem 3rem; }
+            .container-fluid { max-width: 1600px; margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar (exactly as index.html) -->
+        <div class="col-auto sidebar" style="width: 280px;">
+            <div class="brand d-flex align-items-center gap-3 text-white">
+                <div class="brand-logo"><i class="fas fa-database"></i></div>
+                <div><h4 class="mb-0">PK Employee</h4><small>Database System</small></div>
+            </div>
+            <nav class="nav flex-column mt-3">
+                <a class="nav-link" href="/"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a class="nav-link" href="/employees-page"><i class="fas fa-users"></i> Employees</a>
+                <a class="nav-link" href="/add-employee"><i class="fas fa-user-plus"></i> Add Employee</a>
+                <a class="nav-link" href="/departments"><i class="fas fa-building"></i> Departments</a>
+                <a class="nav-link" href="/attendance"><i class="fas fa-calendar-check"></i> Attendance</a>
+                <a class="nav-link active" href="/leaves"><i class="fas fa-umbrella-beach"></i> Leaves</a>
+                <a class="nav-link" href="/department-report"><i class="fas fa-chart-simple"></i> Reports</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col main-content">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+                <h2 class="fw-bold mb-0"><i class="fas fa-umbrella-beach text-primary me-2"></i>Leave Requests</h2>
+            </div>
+
+            <div class="row g-4">
+                <!-- Apply for Leave Form -->
+                <div class="col-lg-5 col-md-12">
+                    <div class="form-card p-4">
+                        <h5 class="mb-3 fw-semibold"><i class="fas fa-pen-alt text-primary me-2"></i>Apply for Leave</h5>
+                        <select id="leaveEmp" class="form-select mb-3" required>
+                            <option value="">Select Employee</option>
+                        </select>
+                        <input type="date" id="startDate" class="form-control mb-3" placeholder="Start Date">
+                        <input type="date" id="endDate" class="form-control mb-3" placeholder="End Date">
+                        <textarea id="reason" class="form-control mb-3" rows="3" placeholder="Reason for leave"></textarea>
+                        <button class="btn btn-primary-custom w-100" onclick="applyLeave()">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Request
+                        </button>
+                        <div id="formMessage" class="mt-3 small"></div>
+                    </div>
+                </div>
+
+                <!-- Leave Requests Table -->
+                <div class="col-lg-7 col-md-12">
+                    <div class="list-card">
+                        <div class="card-header bg-white border-0 pt-4 pb-2 px-4 fw-semibold">
+                            <i class="fas fa-list-ul text-primary me-2"></i>All Requests
+                        </div>
+                        <div class="table-responsive p-0">
+                            <table class="table table-leaves align-middle mb-0" id="leaveTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Dates</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaveTableBody">
+                                    <tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary"></div> Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">© 2026 PK Employee Database System — Secure HRMS Solution</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Helper: escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Load employees dropdown
+    async function loadEmployees() {
+        try {
+            const res = await fetch('/api/employees');
+            if (!res.ok) throw new Error('Failed to fetch employees');
+            const emps = await res.json();
+            const select = document.getElementById('leaveEmp');
+            select.innerHTML = '<option value="">Select Employee</option>' + 
+                emps.map(e => `<option value="${e.id}">${escapeHtml(e.full_name)}</option>`).join('');
+        } catch (err) {
+            console.error(err);
+            document.getElementById('leaveEmp').innerHTML = '<option>Error loading employees</option>';
+        }
+    }
+
+    // Load all leave requests
+    async function loadLeaves() {
+        const tbody = document.getElementById('leaveTableBody');
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary"></div> Loading...</td></tr>';
+        try {
+            const res = await fetch('/api/leave-requests');
+            if (!res.ok) throw new Error('Failed to load leaves');
+            const leaves = await res.json();
+            if (leaves.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No leave requests found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = leaves.map(l => {
+                let statusClass = '';
+                if (l.status === 'Pending') statusClass = 'badge-pending';
+                else if (l.status === 'Approved') statusClass = 'badge-approved';
+                else statusClass = 'badge-rejected';
+                
+                return `
+                    <tr>
+                        <td data-label="Employee">${escapeHtml(l.employee_name)}</td>
+                        <td data-label="Dates">${l.start_date} → ${l.end_date}</td>
+                        <td data-label="Reason">${escapeHtml(l.reason) || '-'}</td>
+                        <td data-label="Status"><span class="badge ${statusClass} px-3 py-2 rounded-pill">${l.status}</span></td>
+                        <td data-label="Action">
+                            ${l.status === 'Pending' ? `
+                                <button class="btn btn-sm btn-outline-success rounded-pill me-1" onclick="updateLeave(${l.id},'Approved')"><i class="fas fa-check"></i> Approve</button>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="updateLeave(${l.id},'Rejected')"><i class="fas fa-times"></i> Reject</button>
+                            ` : '<span class="text-muted">—</span>'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-danger">⚠️ Failed to load leave requests.</td></tr>';
+        }
+    }
+
+    // Submit new leave request
+    window.applyLeave = async () => {
+        const empId = document.getElementById('leaveEmp').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const reason = document.getElementById('reason').value.trim();
+
+        if (!empId) {
+            showFormMessage('Please select an employee.', 'danger');
+            return;
+        }
+        if (!startDate || !endDate) {
+            showFormMessage('Please select both start and end dates.', 'danger');
+            return;
+        }
+        if (new Date(startDate) > new Date(endDate)) {
+            showFormMessage('End date must be after start date.', 'danger');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/leave-requests', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    employee_id: parseInt(empId),
+                    start_date: startDate,
+                    end_date: endDate,
+                    reason: reason
+                })
+            });
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.detail || 'Submission failed');
+            }
+            showFormMessage('Leave request submitted successfully!', 'success');
+            // Clear form
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('reason').value = '';
+            document.getElementById('leaveEmp').value = '';
+            loadLeaves(); // refresh table
+        } catch (err) {
+            showFormMessage(err.message, 'danger');
+        }
+    };
+
+    function showFormMessage(msg, type) {
+        const div = document.getElementById('formMessage');
+        div.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+        setTimeout(() => {
+            const alert = div.querySelector('.alert');
+            if (alert) alert.remove();
+        }, 5000);
+    }
+
+    // Update leave status
+    window.updateLeave = async (id, status) => {
+        try {
+            const res = await fetch(`/api/leave-requests/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            if (!res.ok) throw new Error('Update failed');
+            loadLeaves(); // refresh table
+        } catch (err) {
+            alert('Error updating leave request: ' + err.message);
+        }
+    };
+
+    // Initialize
+    loadEmployees();
+    loadLeaves();
+</script>
+<!-- Bootstrap JS for alert dismissals -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

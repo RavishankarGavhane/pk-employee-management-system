@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PK Employee System | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f1f5f9; }
+
+        /* Full Height Flex Layout */
+        .main-wrapper { display: flex; min-height: 100vh; }
+        .sidebar {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            width: 280px;
+            flex-shrink: 0;
+        }
+        .brand {
+            padding: 1.8rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .brand-logo {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+        }
+        .nav-link {
+            color: #cbd5e1;
+            padding: 0.7rem 1.2rem;
+            margin: 0.3rem 1rem;
+            border-radius: 12px;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .nav-link i { width: 24px; margin-right: 10px; }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* KPI Cards */
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            transition: all 0.25s;
+            border: 1px solid #e2e8f0;
+            height: 100%;
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1); }
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        .stat-value { font-size: 2rem; font-weight: 800; margin: 0.4rem 0 0; }
+
+        /* Section Cards */
+        .section-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #eef2ff;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .section-header {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #eef2ff;
+            background: #fafcff;
+        }
+
+        /* Recent Hires Table */
+        .table-custom th {
+            background: #f8fafc;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.6px;
+            padding: 1rem 1.2rem;
+        }
+        .table-custom td {
+            padding: 1rem 1.2rem;
+            vertical-align: middle;
+        }
+        .table-custom tbody tr:hover {
+            background: #f8fafc !important;
+            transform: translateY(-2px);
+        }
+        .avatar {
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-right: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #64748b;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; min-height: auto; }
+            .main-wrapper { flex-direction: column; }
+            .main-content { padding: 1rem; }
+        }
+        @media (min-width: 1400px) {
+            .main-content { padding: 2.5rem 3rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand d-flex align-items-center gap-3 text-white">
+            <div class="brand-logo"><i class="fas fa-database"></i></div>
+            <div><h4 class="mb-0">PK Employee</h4><small>Database System</small></div>
+        </div>
+        <nav class="nav flex-column mt-3">
+            <a class="nav-link active" href="/"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a class="nav-link" href="/employees-page"><i class="fas fa-users"></i> Employees</a>
+            <a class="nav-link" href="/add-employee"><i class="fas fa-user-plus"></i> Add Employee</a>
+            <a class="nav-link" href="/departments"><i class="fas fa-building"></i> Departments</a>
+            <a class="nav-link" href="/attendance"><i class="fas fa-calendar-check"></i> Attendance</a>
+            <a class="nav-link" href="/leaves"><i class="fas fa-umbrella-beach"></i> Leaves</a>
+            <a class="nav-link" href="/department-report"><i class="fas fa-chart-simple"></i> Reports</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Dashboard</h2>
+                <p class="text-muted">Real-time HR analytics & insights</p>
+            </div>
+            <a href="/add-employee" class="btn btn-primary rounded-pill px-4 py-2">
+                <i class="fas fa-plus me-2"></i>New Employee
+            </a>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row g-4 mb-5" id="statsRow"></div>
+
+        <div class="row g-4">
+            <!-- Recent Hires -->
+            <div class="col-lg-7">
+                <div class="section-card">
+                    <div class="section-header d-flex justify-content-between align-items-center">
+                        <h5 class="fw-semibold mb-0"><i class="fas fa-history me-2 text-primary"></i>Recent Hires</h5>
+                        <a href="/employees-page" class="btn btn-sm btn-outline-secondary rounded-pill">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>NAME</th>
+                                    <th>POSITION</th>
+                                    <th>DEPARTMENT</th>
+                                    <th>SALARY</th>
+                                    <th style="width: 100px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Departments Chart + Quick Actions -->
+            <div class="col-lg-5">
+                <div class="section-card mb-4">
+                    <div class="section-header">
+                        <h5 class="fw-semibold mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>Department Distribution</h5>
+                    </div>
+                    <div class="p-4">
+                        <canvas id="deptChart" height="220"></canvas>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <h5 class="fw-semibold mb-0"><i class="fas fa-bolt me-2 text-primary"></i>Quick Actions</h5>
+                    </div>
+                    <div class="p-4 d-flex flex-wrap gap-3">
+                        <a href="/attendance" class="btn btn-outline-primary rounded-pill flex-grow-1 text-center py-3">
+                            <i class="fas fa-calendar-check me-2"></i>Mark Attendance
+                        </a>
+                        <a href="/leaves" class="btn btn-outline-warning rounded-pill flex-grow-1 text-center py-3">
+                            <i class="fas fa-umbrella-beach me-2"></i>Leave Requests
+                        </a>
+                        <a href="/department-report" class="btn btn-outline-info rounded-pill flex-grow-1 text-center py-3">
+                            <i class="fas fa-chart-line me-2"></i>View Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">© 2026 PK Employee Database System — Secure HRMS Solution</div>
+    </div>
+</div>
+
+<script>
+    let departmentChart = null;
+
+    async function loadDashboardData() {
+        try {
+            const [empRes, deptRes] = await Promise.all([
+                fetch('/api/employees'),
+                fetch('/api/departments')
+            ]);
+
+            const employees = await empRes.json();
+            const departments = await deptRes.json();
+
+            // KPI Cards
+            const total = employees.length;
+            const active = employees.filter(e => e.status === 'Active').length;
+            const totalSalary = employees.reduce((s, e) => s + (e.salary || 0), 0);
+            const avgSalary = total ? Math.round(totalSalary / total) : 0;
+
+            document.getElementById('statsRow').innerHTML = `
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#eef2ff; color:#4f46e5;"><i class="fas fa-users"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Total Employees</div>
+                        <div class="stat-value">${total}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#e6f7ec; color:#10b981;"><i class="fas fa-user-check"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Active Employees</div>
+                        <div class="stat-value">${active}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fff3e3; color:#f59e0b;"><i class="fas fa-indian-rupee-sign"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Total Salary</div>
+                        <div class="stat-value">₹${totalSalary.toLocaleString('en-IN')}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#f3e8ff; color:#8b5cf6;"><i class="fas fa-chart-bar"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Avg Salary</div>
+                        <div class="stat-value">₹${avgSalary}</div>
+                    </div>
+                </div>
+            `;
+
+            // Recent Hires
+            const recent = [...employees].sort((a,b) => b.id - a.id).slice(0, 5);
+            const tbody = document.getElementById('recentTableBody');
+            tbody.innerHTML = recent.map(emp => {
+                const initials = emp.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+                return `
+                    <tr>
+                        <td><strong>${emp.id}</strong></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar" style="background:hsl(${Math.random()*360},75%,55%)">${initials}</div>
+                                <div>
+                                    <span class="fw-semibold">${emp.full_name}</span><br>
+                                    <small class="text-muted">${emp.email}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${emp.position || '-'}</td>
+                        <td><span class="badge bg-light text-dark">${emp.department_name || '—'}</span></td>
+                        <td>₹${(emp.salary || 0).toLocaleString('en-IN')}</td>
+                        <td><a href="/employee-details?id=${emp.id}" class="btn btn-sm btn-outline-primary rounded-pill">View</a></td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Department Chart
+            const deptCounts = {};
+            employees.forEach(emp => {
+                const d = emp.department_name || 'Unassigned';
+                deptCounts[d] = (deptCounts[d] || 0) + 1;
+            });
+
+            const labels = Object.keys(deptCounts);
+            const data = Object.values(deptCounts);
+
+            if (departmentChart) departmentChart.destroy();
+            const ctx = document.getElementById('deptChart').getContext('2d');
+            departmentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ec489a', '#8b5cf6', '#ef4444'],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } },
+                        tooltip: { backgroundColor: '#1e293b' }
+                    }
+                }
+            });
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    loadDashboardData();
+</script>
+</body>
+</html>

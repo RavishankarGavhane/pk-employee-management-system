@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Departments | PK System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f1f5f9; }
+
+        /* Sidebar - exact copy from index.html */
+        .sidebar {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+        .brand {
+            padding: 1.8rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .brand-logo {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+        }
+        .brand h4 { font-weight: 700; letter-spacing: -0.3px; margin-bottom: 0; }
+        .brand small { font-size: 0.7rem; opacity: 0.7; }
+        .nav-link {
+            color: #cbd5e1;
+            padding: 0.7rem 1.2rem;
+            margin: 0.3rem 1rem;
+            border-radius: 12px;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .nav-link i { width: 24px; margin-right: 10px; }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        /* Main content */
+        .main-content { padding: 2rem; }
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #64748b;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2rem;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.25rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.05);
+            transition: all 0.25s;
+            border: 1px solid #e2e8f0;
+            height: 100%;
+        }
+        .kpi-card:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1); }
+        .kpi-icon {
+            width: 48px; height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        .kpi-value { font-size: 1.8rem; font-weight: 800; margin: 0.5rem 0 0; }
+
+        /* Department Cards */
+        .dept-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #eef2ff;
+            transition: all 0.2s;
+            height: 100%;
+            overflow: hidden;
+        }
+        .dept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1);
+            border-color: #cbd5e1;
+        }
+        .dept-header {
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            padding: 1rem;
+            border-bottom: 2px solid #4f46e5;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dept-stats {
+            padding: 1rem;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .stat-label { color: #64748b; font-size: 0.85rem; }
+        .stat-number { font-weight: 600; }
+
+        .btn-primary-custom {
+            background: #4f46e5;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            color: white;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-primary-custom:hover { background: #4338ca; transform: scale(1.02); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { min-height: auto; }
+            .main-content { padding: 1rem; }
+            .kpi-value { font-size: 1.4rem; }
+        }
+        @media (min-width: 1400px) {
+            .main-content { padding: 2rem 3rem; }
+            .container-fluid { max-width: 1600px; margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar (full) -->
+        <div class="col-auto sidebar" style="width: 280px;">
+            <div class="brand d-flex align-items-center gap-3 text-white">
+                <div class="brand-logo"><i class="fas fa-database"></i></div>
+                <div><h4 class="mb-0">PK Employee</h4><small>Database System</small></div>
+            </div>
+            <nav class="nav flex-column mt-3">
+                <a class="nav-link" href="/"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a class="nav-link" href="/employees-page"><i class="fas fa-users"></i> Employees</a>
+                <a class="nav-link" href="/add-employee"><i class="fas fa-user-plus"></i> Add Employee</a>
+                <a class="nav-link active" href="/departments"><i class="fas fa-building"></i> Departments</a>
+                <a class="nav-link" href="/attendance"><i class="fas fa-calendar-check"></i> Attendance</a>
+                <a class="nav-link" href="/leaves"><i class="fas fa-umbrella-beach"></i> Leaves</a>
+                <a class="nav-link" href="/department-report"><i class="fas fa-chart-simple"></i> Reports</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col main-content">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+                <div>
+                    <h2 class="fw-bold mb-1"><i class="fas fa-building text-primary me-2"></i>Department Management</h2>
+                    <p class="text-muted mb-0">Manage organizational structure and view department-wise metrics</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button id="exportDeptBtn" class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="fas fa-download me-2"></i>Export CSV
+                    </button>
+                    <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addDeptModal">
+                        <i class="fas fa-plus me-2"></i>Add Department
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Row -->
+            <div class="row g-4 mb-5" id="kpiRow">
+                <div class="col-md-3 col-sm-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#eef2ff; color:#4f46e5;"><i class="fas fa-building"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Total Departments</div>
+                        <div class="kpi-value" id="totalDepts">—</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#e6f7ec; color:#10b981;"><i class="fas fa-users"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Total Employees</div>
+                        <div class="kpi-value" id="totalEmployees">—</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#fff3e3; color:#f59e0b;"><i class="fas fa-chart-line"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Avg Employees/Dept</div>
+                        <div class="kpi-value" id="avgEmployees">—</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#f3e8ff; color:#8b5cf6;"><i class="fas fa-trophy"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Largest Dept</div>
+                        <div class="kpi-value" id="largestDept">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Cards Grid -->
+            <div class="row g-4" id="deptList">
+                <div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div> Loading departments...</div>
+            </div>
+
+            <div class="footer">© 2026 PK Employee Database System — Secure HRMS Solution</div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Department Modal -->
+<div class="modal fade" id="addDeptModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold"><i class="fas fa-plus-circle text-primary me-2"></i>Create New Department</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Department Name *</label>
+                    <input type="text" id="deptName" class="form-control" placeholder="e.g., Engineering, Marketing">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Description</label>
+                    <textarea id="deptDesc" class="form-control" rows="3" placeholder="Brief description of the department"></textarea>
+                </div>
+                <div id="modalMessage"></div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary-custom" onclick="addDepartment()">Create Department</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let departmentsData = []; // combined: { id, name, description, employee_count }
+    let allEmployeesCount = 0;
+
+    // Helper: escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Format number with commas
+    function formatNumber(num) {
+        return num.toLocaleString('en-IN');
+    }
+
+    // Load departments and employee counts from stats endpoint
+    async function loadDepartments() {
+        const container = document.getElementById('deptList');
+        container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div> Loading departments...</div>';
+        try {
+            // Fetch department stats (includes employee_count)
+            const statsRes = await fetch('/api/department/stats');
+            if (!statsRes.ok) throw new Error('Failed to fetch department stats');
+            const stats = await statsRes.json();
+            
+            // Fetch department details (name, description)
+            const deptRes = await fetch('/api/departments');
+            if (!deptRes.ok) throw new Error('Failed to fetch departments');
+            const departments = await deptRes.json();
+            
+            // Merge data: use stats for employee_count, departments for description
+            departmentsData = departments.map(dept => {
+                const stat = stats.find(s => s.department_id === dept.id) || { employee_count: 0, total_salary: 0 };
+                return {
+                    id: dept.id,
+                    name: dept.name,
+                    description: dept.description,
+                    employee_count: stat.employee_count || 0,
+                    total_salary: stat.total_salary || 0
+                };
+            });
+            
+            // Update KPIs
+            const totalDepts = departmentsData.length;
+            const totalEmployees = departmentsData.reduce((sum, d) => sum + d.employee_count, 0);
+            const avgEmployees = totalDepts ? (totalEmployees / totalDepts).toFixed(1) : 0;
+            const largest = departmentsData.reduce((max, d) => d.employee_count > max.employee_count ? d : max, { employee_count: 0, name: 'N/A' });
+            
+            document.getElementById('totalDepts').innerText = totalDepts;
+            document.getElementById('totalEmployees').innerText = formatNumber(totalEmployees);
+            document.getElementById('avgEmployees').innerHTML = avgEmployees + '<small class="fs-6"> per dept</small>';
+            document.getElementById('largestDept').innerHTML = largest.employee_count > 0 ? `${escapeHtml(largest.name)}<small class="fs-6"> (${largest.employee_count})</small>` : '—';
+            
+            // Render department cards
+            if (departmentsData.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center py-5 text-muted">No departments found. Click "Add Department" to create one.</div>';
+                return;
+            }
+            
+            container.innerHTML = departmentsData.map(dept => `
+                <div class="col-md-4 col-sm-6">
+                    <div class="dept-card">
+                        <div class="dept-header">
+                            <span><i class="fas fa-building me-2 text-primary"></i>${escapeHtml(dept.name)}</span>
+                            <span class="badge bg-primary rounded-pill">${dept.employee_count} emp</span>
+                        </div>
+                        <div class="dept-stats">
+                            <div class="stat-row">
+                                <span class="stat-label"><i class="fas fa-users me-1"></i> Employees</span>
+                                <span class="stat-number">${dept.employee_count}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label"><i class="fas fa-indian-rupee-sign me-1"></i> Total Salary</span>
+                                <span class="stat-number">₹${formatNumber(dept.total_salary)}</span>
+                            </div>
+                            ${dept.description ? `<div class="mt-2 pt-2 text-muted small"><i class="fas fa-align-left me-1"></i> ${escapeHtml(dept.description)}</div>` : ''}
+                            <div class="mt-3">
+                                <a href="/employees-page?dept=${dept.id}" class="btn btn-sm btn-outline-primary rounded-pill w-100">
+                                    <i class="fas fa-eye me-1"></i> View Employees
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = `<div class="col-12 text-center py-5 text-danger">⚠️ Failed to load departments. Please ensure the server is running.</div>`;
+        }
+    }
+
+    // Add new department
+    window.addDepartment = async () => {
+        const name = document.getElementById('deptName').value.trim();
+        const description = document.getElementById('deptDesc').value.trim();
+        if (!name) {
+            showModalMessage('Department name is required.', 'danger');
+            return;
+        }
+        try {
+            const res = await fetch('/api/departments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description })
+            });
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.detail || 'Creation failed');
+            }
+            showModalMessage('Department created successfully!', 'success');
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addDeptModal'));
+                modal.hide();
+                loadDepartments(); // refresh list
+                document.getElementById('deptName').value = '';
+                document.getElementById('deptDesc').value = '';
+            }, 1500);
+        } catch (err) {
+            showModalMessage(err.message, 'danger');
+        }
+    };
+
+    function showModalMessage(msg, type) {
+        const div = document.getElementById('modalMessage');
+        div.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+        setTimeout(() => {
+            const alert = div.querySelector('.alert');
+            if (alert) alert.remove();
+        }, 4000);
+    }
+
+    // Export to CSV
+    function exportToCSV() {
+        if (!departmentsData.length) {
+            alert('No department data to export.');
+            return;
+        }
+        const headers = ['Department ID', 'Department Name', 'Description', 'Employee Count', 'Total Salary (₹)'];
+        const rows = departmentsData.map(d => [
+            d.id,
+            d.name,
+            d.description || '',
+            d.employee_count,
+            d.total_salary
+        ]);
+        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `departments_${new Date().toISOString().slice(0,19)}.csv`);
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('exportDeptBtn').addEventListener('click', exportToCSV);
+    loadDepartments();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

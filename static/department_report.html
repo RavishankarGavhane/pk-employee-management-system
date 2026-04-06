@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Department Analytics | PK System - Enhanced UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Include chartjs-plugin-datalabels for enhanced data visibility -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f0f4f8; }
+
+        /* SIDEBAR MODERN */
+        .sidebar {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            transition: all 0.3s;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+        }
+        .brand {
+            padding: 1.8rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .brand-logo {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+        }
+        .brand h4 { font-weight: 700; letter-spacing: -0.3px; margin-bottom: 0; }
+        .brand small { font-size: 0.7rem; opacity: 0.7; }
+        .nav-link {
+            color: #cbd5e1;
+            padding: 0.7rem 1.2rem;
+            margin: 0.3rem 1rem;
+            border-radius: 12px;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .nav-link i { width: 24px; margin-right: 10px; }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .main-content { padding: 1.8rem 2rem; }
+
+        /* KPI CARDS GLASS */
+        .kpi-card {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 28px;
+            padding: 1.4rem;
+            box-shadow: 0 12px 28px -8px rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(255,255,255,0.6);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card:hover { transform: translateY(-6px); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.12); }
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+        }
+
+        /* DEPT CARD ENHANCED */
+        .dept-card {
+            background: white;
+            border-radius: 24px;
+            border: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            height: 100%;
+            overflow: hidden;
+        }
+        .dept-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -12px rgba(79,70,229,0.15);
+            border-left: 3px solid #4f46e5;
+        }
+        .dept-header {
+            background: linear-gradient(135deg, #fefefe, #fafcff);
+            padding: 1rem 1.2rem;
+            border-bottom: 2px solid #4f46e5;
+            border-radius: 24px 24px 0 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .stat-label { color: #475569; font-size: 0.85rem; font-weight: 500; }
+        .stat-number { font-weight: 700; color: #0f172a; }
+
+        /* CHART CONTAINERS – PREMIUM GLASS EFFECT */
+        .chart-container {
+            background: rgba(255,255,255,0.96);
+            border-radius: 32px;
+            border: 1px solid rgba(203,213,225,0.4);
+            padding: 1.5rem;
+            box-shadow: 0 15px 35px -12px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            backdrop-filter: blur(2px);
+        }
+        .chart-container:hover {
+            box-shadow: 0 20px 40px -12px rgba(79,70,229,0.12);
+        }
+
+        /* badge trend */
+        .trend-badge {
+            font-size: 0.7rem;
+            background: #eef2ff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #475569;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2rem;
+        }
+        @media (max-width: 768px) {
+            .sidebar { min-height: auto; width: 100% !important; }
+            .main-content { padding: 1rem; }
+            .kpi-value { font-size: 1.5rem; }
+        }
+        /* custom gradient for doughnut */
+        .insight-text {
+            font-size: 0.75rem;
+            color: #4b5563;
+        }
+        .badge-light-custom {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        .progress-bar-animated {
+            transition: width 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <div class="col-auto sidebar" style="width: 280px;">
+            <div class="brand d-flex align-items-center gap-3 text-white">
+                <div class="brand-logo"><i class="fas fa-chart-network"></i></div>
+                <div><h4 class="mb-0">PK Employee</h4><small>Database System</small></div>
+
+            </div>
+            <nav class="nav flex-column mt-3">
+                <a class="nav-link" href="/"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a class="nav-link" href="/employees-page"><i class="fas fa-users"></i> Employees</a>
+                <a class="nav-link" href="/add-employee"><i class="fas fa-user-plus"></i> Add Employee</a>
+                <a class="nav-link" href="/departments"><i class="fas fa-building"></i> Departments</a>
+                <a class="nav-link" href="/attendance"><i class="fas fa-calendar-check"></i> Attendance</a>
+                <a class="nav-link" href="/leaves"><i class="fas fa-umbrella-beach"></i> Leaves</a>
+                <a class="nav-link active" href="/department-report"><i class="fas fa-chart-simple"></i> Reports</a>
+            </nav>
+        </div>
+
+        <div class="col main-content">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                <div>
+                    <h2 class="fw-bold mb-1 display-6" style="font-size: 1.9rem;"><i class="fas fa-chart-simple text-primary me-2"></i>Department Analytics</h2>
+                    <p class="text-muted mb-0"><i class="fas fa-calendar-alt me-1"></i> Real-time intelligence & performance metrics</p>
+                </div>
+                <div>
+                    <button id="exportBtn" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+                        <i class="fas fa-download me-2"></i>Export CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Row with micro-interactions -->
+            <div class="row g-4 mb-5" id="kpiRow">
+                <div class="col-md-3 col-sm-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#eef2ff; color:#4f46e5;"><i class="fas fa-building"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Total Departments</div>
+                        <div class="kpi-value" id="totalDepts">—</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#e0f2fe; color:#0284c7;"><i class="fas fa-users"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Total Employees</div>
+                        <div class="kpi-value" id="totalEmployees">—</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#dcfce7; color:#10b981;"><i class="fas fa-indian-rupee-sign"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Total Salary Pool</div>
+                        <div class="kpi-value" id="totalSalary">—</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:#fae8ff; color:#c2410c;"><i class="fas fa-chart-line"></i></div>
+                        <div class="text-muted text-uppercase small fw-semibold">Avg Salary (Overall)</div>
+                        <div class="kpi-value" id="avgSalary">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Cards Section -->
+            <h5 class="fw-semibold mb-3"><i class="fas fa-layer-group text-primary me-2"></i>Department Breakdown</h5>
+            <div class="row g-4 mb-5" id="deptCards"></div>
+
+            <!-- ENHANCED GRAPH CARDS SECTION: 3 modern graphs with different styles -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-5">
+                    <div class="chart-container h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-semibold mb-0"><i class="fas fa-chart-pie text-info me-2"></i>Headcount Distribution</h5>
+                            <span class="trend-badge"><i class="fas fa-chart-simple"></i> Donut view</span>
+                        </div>
+                        <canvas id="deptDoughnutChart" height="240"></canvas>
+                        <div class="text-center mt-2 insight-text"><i class="fas fa-info-circle"></i> Department workforce share</div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="chart-container h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-semibold mb-0"><i class="fas fa-chart-line text-success me-2"></i>Avg Salary Trend & Comparison</h5>
+                            <span class="trend-badge"><i class="fas fa-arrow-trend-up"></i> Analytics</span>
+                        </div>
+                        <canvas id="avgSalaryEnhancedChart" height="240"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="chart-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-semibold mb-0"><i class="fas fa-chart-column text-warning me-2"></i>Salary Pool (₹)</h5>
+                            <span class="trend-badge">Horizontal Comparison</span>
+                        </div>
+                        <canvas id="salaryPoolHorizontalChart" height="280"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="chart-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-semibold mb-0"><i class="fas fa-chart-radar text-danger me-2"></i>Efficiency Index (Employees vs Avg Salary)</h5>
+                            <span class="trend-badge"><i class="fas fa-lightbulb"></i> Bubble concept</span>
+                        </div>
+                        <canvas id="bubbleEfficiencyChart" height="280"></canvas>
+                        <div class="small text-muted mt-2 text-center">Bubble size = total salary pool | X: employee count | Y: avg salary</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">© 2026 PK Employee Database System — Enhanced Analytics Suite | Real-time metrics</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    Chart.register(ChartDataLabels);
+    let departmentData = [];
+    let doughnutChart = null, avgEnhancedChart = null, salaryHorizontal = null, bubbleChart = null;
+
+    function formatCurrency(amount) {
+        return '₹' + (amount || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    async function loadReport() {
+        const deptCardsContainer = document.getElementById('deptCards');
+        deptCardsContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div> Loading department analytics...</div>';
+
+        try {
+            const res = await fetch('/api/department/stats');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            departmentData = await res.json();
+
+            const totalDepts = departmentData.length;
+            const totalEmployees = departmentData.reduce((sum, d) => sum + (d.employee_count || 0), 0);
+            const totalSalary = departmentData.reduce((sum, d) => sum + (d.total_salary || 0), 0);
+            const avgSalaryOverall = totalEmployees ? totalSalary / totalEmployees : 0;
+
+            document.getElementById('totalDepts').innerText = totalDepts;
+            document.getElementById('totalEmployees').innerText = totalEmployees;
+            document.getElementById('totalSalary').innerHTML = formatCurrency(totalSalary);
+            document.getElementById('avgSalary').innerHTML = formatCurrency(avgSalaryOverall);
+
+            if (departmentData.length === 0) {
+                deptCardsContainer.innerHTML = '<div class="col-12 text-center py-4 text-muted">No department data available.</div>';
+                return;
+            }
+
+            // enhanced department cards with better metrics
+            deptCardsContainer.innerHTML = departmentData.map(dept => {
+                const avgDeptSalary = dept.employee_count ? dept.total_salary / dept.employee_count : 0;
+                const workforcePercent = totalEmployees ? ((dept.employee_count / totalEmployees) * 100).toFixed(1) : 0;
+                let salaryTrend = avgDeptSalary > avgSalaryOverall ? '↑ Above avg' : '↓ Below avg';
+                let trendColor = avgDeptSalary > avgSalaryOverall ? 'text-success' : 'text-secondary';
+                return `
+                    <div class="col-md-4 col-sm-6">
+                        <div class="dept-card">
+                            <div class="dept-header">
+                                <i class="fas fa-building me-2 text-primary"></i>${escapeHtml(dept.department_name)}
+                                <span class="float-end badge bg-light text-dark rounded-pill">${workforcePercent}%</span>
+                            </div>
+                            <div class="p-3">
+                                <div class="stat-row">
+                                    <span class="stat-label"><i class="fas fa-users me-1"></i> Employees</span>
+                                    <span class="stat-number fw-bold">${dept.employee_count}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label"><i class="fas fa-indian-rupee-sign me-1"></i> Total Salary</span>
+                                    <span class="stat-number">${formatCurrency(dept.total_salary)}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label"><i class="fas fa-chart-line me-1"></i> Avg Salary</span>
+                                    <span class="stat-number">${formatCurrency(avgDeptSalary)} <small class="${trendColor}">${salaryTrend}</small></span>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="d-flex justify-content-between mb-1 small"><span>Headcount ratio</span><span>${workforcePercent}%</span></div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary progress-bar-animated" style="width: ${workforcePercent}%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // ----- 1. DOUGHNUT CHART (enhanced, better visual)
+            const ctxDoughnut = document.getElementById('deptDoughnutChart').getContext('2d');
+            if (doughnutChart) doughnutChart.destroy();
+            doughnutChart = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: departmentData.map(d => d.department_name),
+                    datasets: [{
+                        data: departmentData.map(d => d.employee_count),
+                        backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec489a', '#84cc16'],
+                        borderWidth: 0,
+                        hoverOffset: 12,
+                        cutout: '62%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} employees (${((ctx.raw / departmentData.reduce((a,b)=>a+b.employee_count,0))*100).toFixed(1)}%)` } },
+                        datalabels: { display: false }
+                    }
+                }
+            });
+
+            // ----- 2. ENHANCED AVG SALARY (Line + bar hybrid look)
+            const avgCtxEnhanced = document.getElementById('avgSalaryEnhancedChart').getContext('2d');
+            if (avgEnhancedChart) avgEnhancedChart.destroy();
+            const avgSalaries = departmentData.map(d => d.employee_count ? (d.total_salary / d.employee_count) : 0);
+            avgEnhancedChart = new Chart(avgCtxEnhanced, {
+                type: 'line',
+                data: {
+                    labels: departmentData.map(d => d.department_name),
+                    datasets: [
+                        {
+                            label: 'Average Salary (₹)',
+                            data: avgSalaries,
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#c084fc',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 8,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: { callbacks: { label: (ctx) => `Average: ${formatCurrency(ctx.raw)}` } },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: (value) => value ? '₹' + Math.round(value/1000) + 'k' : '',
+                            font: { size: 9, weight: 'bold' },
+                            color: '#4b5563'
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Salary (₹)', font: { size: 10 } }, ticks: { callback: (val) => formatCurrency(val) } },
+                        x: { ticks: { maxRotation: 35, minRotation: 25, font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // ----- 3. HORIZONTAL BAR for Salary Pool (more refined)
+            const salaryHorCtx = document.getElementById('salaryPoolHorizontalChart').getContext('2d');
+            if (salaryHorizontal) salaryHorizontal.destroy();
+            salaryHorizontal = new Chart(salaryHorCtx, {
+                type: 'bar',
+                data: {
+                    labels: departmentData.map(d => d.department_name),
+                    datasets: [{
+                        label: 'Total Salary Pool (₹)',
+                        data: departmentData.map(d => d.total_salary),
+                        backgroundColor: '#f97316',
+                        borderRadius: 10,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { callbacks: { label: (ctx) => `Total: ${formatCurrency(ctx.raw)}` } },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'right',
+                            formatter: (value) => value ? formatCurrency(value).slice(0,6)+'...' : '',
+                            font: { size: 9 }
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, ticks: { callback: (val) => formatCurrency(val) } },
+                        y: { ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // ----- 4. BUBBLE EFFICIENCY INDEX: X = employee count, Y = avg salary, Radius = total salary pool
+            const bubbleData = departmentData.map(dept => ({
+                x: dept.employee_count,
+                y: dept.employee_count ? (dept.total_salary / dept.employee_count) : 0,
+                r: Math.sqrt(dept.total_salary) / 80,   // dynamic radius scaling
+                label: dept.department_name,
+                totalSalary: dept.total_salary
+            }));
+            const bubbleCtx = document.getElementById('bubbleEfficiencyChart').getContext('2d');
+            if (bubbleChart) bubbleChart.destroy();
+            bubbleChart = new Chart(bubbleCtx, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Departments (Size = Salary Pool)',
+                        data: bubbleData,
+                        backgroundColor: 'rgba(236, 72, 153, 0.7)',
+                        borderColor: '#db2777',
+                        borderWidth: 1,
+                        hoverBackgroundColor: '#f43f5e'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    const raw = ctx.raw;
+                                    return `${raw.label} | Employees: ${raw.x} | Avg Salary: ${formatCurrency(raw.y)} | Total Pool: ${formatCurrency(raw.totalSalary)}`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            formatter: (value, context) => {
+                                return context.dataset.data[context.dataIndex]?.label || '';
+                            },
+                            color: '#1f2937',
+                            font: { weight: 'bold', size: 9 },
+                            anchor: 'center',
+                            align: 'center',
+                            offset: 0
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Number of Employees', font: { weight: 'bold' } }, beginAtZero: true, ticks: { stepSize: 1 } },
+                        y: { title: { display: true, text: 'Average Salary (₹)' }, beginAtZero: true, ticks: { callback: (val) => formatCurrency(val) } }
+                    }
+                }
+            });
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('deptCards').innerHTML = `<div class="col-12 text-center py-4 text-danger">⚠️ Failed to load report. Ensure server /api/department/stats is active.</div>`;
+        }
+    }
+
+    function exportToCSV() {
+        if (!departmentData.length) {
+            alert('No data to export.');
+            return;
+        }
+        const headers = ['Department Name', 'Employee Count', 'Total Salary (₹)', 'Average Salary (₹)'];
+        const rows = departmentData.map(d => [
+            d.department_name,
+            d.employee_count,
+            d.total_salary,
+            d.employee_count ? (d.total_salary / d.employee_count).toFixed(2) : 0
+        ]);
+        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `department_enhanced_report_${new Date().toISOString().slice(0,19)}.csv`);
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+    loadReport();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
