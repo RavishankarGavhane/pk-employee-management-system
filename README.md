@@ -34,22 +34,22 @@ This project allows you to manage employees, departments, attendance, and leave 
 pk_employee_database_system/
 │
 ├── static/
-│   ├── images/              # UI images & assets
-│   ├── add_employee.html
-│   ├── employees.html
-│   ├── attendance.html
-│   ├── departments.html
-│   └── ...
+│ ├── images/ # UI images & assets
+│ ├── add_employee.html
+│ ├── employees.html
+│ ├── attendance.html
+│ ├── departments.html
+│ └── ...
 │
-├── alembic/                 # Database migrations
-├── venv/                    # Virtual environment
-├── .env                     # Environment variables
-├── database.py              # DB connection setup
-├── main.py                  # FastAPI entry point
-├── model.py                 # Pydantic schemas
-├── models_db.py             # SQLAlchemy models
-├── requirements.txt         # Dependencies
-└── README.md                # Documentation
+├── alembic/ # Database migrations
+├── venv/ # Virtual environment (ignored)
+├── .env # Environment variables (ignored)
+├── database.py # DB connection setup
+├── main.py # FastAPI entry point
+├── model.py # Pydantic schemas
+├── models_db.py # SQLAlchemy models
+├── requirements.txt # Dependencies
+└── README.md # Documentation
 ---
 
 ## ⚙️ Setup Instructions
